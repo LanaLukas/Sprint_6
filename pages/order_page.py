@@ -1,32 +1,26 @@
+import allure
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 
 from locators.order_page_locators import OrderPageLocators
 from pages.base_page import BasePage
+from test_data import BLACK_COLOR, GRAY_COLOR
 
 
 class OrderPage(BasePage):
-    URL = "https://qa-scooter.praktikum-services.ru/order"
-
+    @allure.step('Выбираем станцию метро {metro_station}')
     def select_metro_station(self, metro_station):
-        metro_input = self.enter_text(
+        self.enter_text(
             OrderPageLocators.METRO_STATION_DROPDOWN,
             metro_station
         )
-
-        options = self.wait.until(
-            ec.visibility_of_all_elements_located(OrderPageLocators.METRO_STATION_OPTIONS)
+        station_option = (
+            OrderPageLocators.METRO_STATION_OPTION[0],
+            OrderPageLocators.METRO_STATION_OPTION[1].format(station=metro_station),
         )
+        self.click_element(station_option)
 
-        station_name = metro_station.lower()
-        for option in options:
-            if station_name in option.text.lower():
-                option.click()
-                return
-
-        metro_input.send_keys(Keys.ARROW_DOWN)
-        metro_input.send_keys(Keys.ENTER)
-
+    @allure.step('Заполняем первую форму заказа')
     def fill_first_form(self, name, surname, address, metro, phone):
         self.enter_text(OrderPageLocators.NAME_INPUT, name)
         self.enter_text(OrderPageLocators.SURNAME_INPUT, surname)
@@ -39,6 +33,7 @@ class OrderPage(BasePage):
             ec.visibility_of_element_located(OrderPageLocators.DATE_INPUT)
         )
 
+    @allure.step('Заполняем вторую форму заказа')
     def fill_second_form(self, date, period, color, comment):
         date_input = self.enter_text(OrderPageLocators.DATE_INPUT, date)
         date_input.send_keys(Keys.ESCAPE)
@@ -50,14 +45,16 @@ class OrderPage(BasePage):
         )
         self.click_element(period_option)
 
-        if color == "чёрный":
-            self.click_element(OrderPageLocators.COLOR_CHECKBOX_BLACK)
-        elif color == "серый":
-            self.click_element(OrderPageLocators.COLOR_CHECKBOX_GREY)
+        color_locators = {
+            BLACK_COLOR: OrderPageLocators.COLOR_CHECKBOX_BLACK,
+            GRAY_COLOR: OrderPageLocators.COLOR_CHECKBOX_GREY,
+        }
+        color_locator = color_locators[color]
+        self.click_element(color_locator)
 
-        if comment:
-            self.enter_text(OrderPageLocators.COMMENT_INPUT, comment)
+        self.enter_text(OrderPageLocators.COMMENT_INPUT, comment)
 
+    @allure.step('Подтверждаем заказ')
     def submit_order(self):
         self.click_element(OrderPageLocators.ORDER_BUTTON_FINAL)
         self.wait.until(
@@ -65,9 +62,11 @@ class OrderPage(BasePage):
         )
         self.click_element(OrderPageLocators.CONFIRM_BUTTON_YES)
 
+    @allure.step('Проверяем успешное оформление заказа')
     def is_order_successful(self):
         return bool(self.is_element_visible(OrderPageLocators.SUCCESS_HEADER))
 
+    @allure.step('Создаем заказ')
     def create_order(self, name, surname, address, metro, phone, date, period, color, comment):
         self.fill_first_form(name, surname, address, metro, phone)
         self.fill_second_form(date, period, color, comment)

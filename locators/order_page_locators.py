@@ -6,7 +6,10 @@ class OrderPageLocators:
     SURNAME_INPUT = (By.CSS_SELECTOR, "input[placeholder*='Фамилия']")
     ADDRESS_INPUT = (By.CSS_SELECTOR, "input[placeholder*='Адрес']")
     METRO_STATION_DROPDOWN = (By.CSS_SELECTOR, "input[placeholder*='Станция']")
-    METRO_STATION_OPTIONS = (By.CSS_SELECTOR, "div.select-search__select button")
+    METRO_STATION_OPTION = (
+        By.XPATH,
+        "//div[contains(@class,'select-search__select')]//button[normalize-space()='{station}']",
+    )
     PHONE_INPUT = (By.CSS_SELECTOR, "input[placeholder*='Телефон']")
     NEXT_BUTTON = (
         By.XPATH,

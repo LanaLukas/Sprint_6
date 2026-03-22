@@ -23,6 +23,9 @@ FAQ_ANSWER_7 = (
 )
 FAQ_ANSWER_8 = "Да, обязательно. Всем самокатов! И Москве, и Московской области."
 
+BLACK_COLOR = 'чёрный'
+GRAY_COLOR = 'серый'
+
 ORDER_DATA_1 = {
     "name": "Иван",
     "surname": "Иванов",
@@ -46,5 +49,3 @@ ORDER_DATA_2 = {
     "color": "серый",
     "comment": "Подъезд 3",
 }
-
-DZEN_URL = "dzen.ru"
